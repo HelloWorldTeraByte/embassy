@@ -68,6 +68,7 @@ embedded-io-async = { version = "0.6.1" }
 chrono = { version = "^0.4", default-features = false, optional = true}
 bit_field = "0.10.2"
 document-features = "0.2.7"
+fdcan = { version = "0.2.0", optional = true }
 
 [dev-dependencies]
 critical-section = { version = "1.1", features = ["std"] }
@@ -953,7 +954,7 @@ stm32h743vi = [ "stm32-metapac/stm32h743vi" ]
 stm32h743xg = [ "stm32-metapac/stm32h743xg" ]
 stm32h743xi = [ "stm32-metapac/stm32h743xi" ]
 stm32h743zg = [ "stm32-metapac/stm32h743zg" ]
-stm32h743zi = [ "stm32-metapac/stm32h743zi" ]
+stm32h743zi = [ "stm32-metapac/stm32h743zi", "fdcan/fdcan_h7" ]
 stm32h745bg-cm7 = [ "stm32-metapac/stm32h745bg-cm7" ]
 stm32h745bg-cm4 = [ "stm32-metapac/stm32h745bg-cm4" ]
 stm32h745bi-cm7 = [ "stm32-metapac/stm32h745bi-cm7" ]
