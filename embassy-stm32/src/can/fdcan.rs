@@ -130,18 +130,15 @@ impl<T: Instance> interrupt::typelevel::Handler<T::IT0Interrupt> for IT0Interrup
         let regs = T::regs();
 
         let ir = regs.ir().read();
-        info!("it0 interrupt: {:b}", ir.0);
 
         if ir.tc() {
             regs.ir().write(|w| w.set_tc(true));
             T::state().tx_waker.wake();
-            info!("tc");
         }
 
         if ir.tefn() {
             regs.ir().write(|w| w.set_tefn(true));
             T::state().tx_waker.wake();
-            info!("tef");
         }
 
         if ir.ped() || ir.pea() {
@@ -149,19 +146,16 @@ impl<T: Instance> interrupt::typelevel::Handler<T::IT0Interrupt> for IT0Interrup
                 w.set_ped(true);
                 w.set_pea(true);
             });
-            info!("ped/pea");
         }
 
         if ir.rfn(0) {
             regs.ir().write(|w| w.set_rfn(0, true));
             T::state().rx_waker.wake();
-            info!("rfn0");
         }
 
         if ir.rfn(1) {
             regs.ir().write(|w| w.set_rfn(1, true));
             T::state().rx_waker.wake();
-            info!("rfn1");
         }
     }
 }
@@ -171,9 +165,7 @@ pub struct IT1InterruptHandler<T: Instance> {
 }
 
 impl<T: Instance> interrupt::typelevel::Handler<T::IT1Interrupt> for IT1InterruptHandler<T> {
-    unsafe fn on_interrupt() {
-        info!("it1 interrupt");
-    }
+    unsafe fn on_interrupt() {}
 }
 
 #[derive(Debug)]
@@ -235,7 +227,7 @@ impl<'d, T: Instance> Fdcan<'d, T, fdcan::ConfigMode> {
         tx.set_as_af(tx.af_num(), AFType::OutputPushPull);
 
         T::enable_and_reset();
-        info!("can peripheral running at {}", T::frequency());
+        debug!("can peripheral running at {}", T::frequency());
 
         rx.set_as_af(rx.af_num(), AFType::Input);
         tx.set_as_af(tx.af_num(), AFType::OutputPushPull);
