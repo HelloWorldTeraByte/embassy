@@ -154,6 +154,17 @@ impl<T: Instance> interrupt::typelevel::Handler<T::IT0Interrupt> for IT0Interrup
 
         let ir = regs.ir().read();
 
+        if ir.bo() {
+            /* We entered/left busoff state. This would block the awaited TX forever. Force retry. */
+            regs.ir().write(|w| w.set_bo(true));
+
+            let cccr = regs.cccr().read();
+            if cccr.init() {
+                // BusOff - so many TX errors that interface got detached.
+                regs.cccr().write(|w| w.set_init(false));
+            }
+        }
+
         if ir.tc() {
             regs.ir().write(|w| w.set_tc(true));
             T::state().tx_waker.wake();
@@ -323,6 +334,7 @@ impl<'d, T: Instance> Fdcan<'d, T, fdcan::ConfigMode> {
         can.enable_interrupt(fdcan::interrupt::Interrupt::RxFifo0NewMsg);
         can.enable_interrupt(fdcan::interrupt::Interrupt::RxFifo1NewMsg);
         can.enable_interrupt(fdcan::interrupt::Interrupt::TxComplete);
+        can.enable_interrupt(fdcan::interrupt::Interrupt::BusOff);
         can.enable_interrupt_line(fdcan::interrupt::InterruptLine::_0, true);
         can.enable_interrupt_line(fdcan::interrupt::InterruptLine::_1, true);
 
